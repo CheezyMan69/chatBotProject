@@ -7,3 +7,5 @@ ignoring zone identifiers
 
 ignoring package installation temps
 *.egg-info/
+
+setup.py
