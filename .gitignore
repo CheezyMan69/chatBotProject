@@ -4,3 +4,6 @@ ignoring venv files
 
 ignoring zone identifiers
 *:Zone.Identifier
+
+ignoring package installation temps
+*.egg-info/
