@@ -1,5 +1,5 @@
 import streamlit as st
-import src.rag_functions
+import src.llm_calls.rag_functions
 import os
 
 st.set_page_config(page_title="Chatbot", page_icon="💬")
@@ -32,9 +32,9 @@ if user_input:
 
     # Generate a bot response
     if rag_button:  
-        bot_response = src.rag_functions.gemini_call_rag(user_input)
+        bot_response = src.llm_calls.rag_functions.gemini_call_rag(user_input)
     else:
-        bot_response = src.rag_functions.gemini_call_normal(user_input)
+        bot_response = src.llm_calls.rag_functions.gemini_call_normal(user_input)
 
 
     # Add bot message to history

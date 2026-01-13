@@ -89,4 +89,3 @@ def gemini_call_rag(prompt:str):
     return response.content
 
 
-
