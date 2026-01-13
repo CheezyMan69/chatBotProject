@@ -9,3 +9,6 @@ ignoring package installation temps
 *.egg-info/
 
 setup.py
+
+ignoring python caches
+*__pycache__*/*
