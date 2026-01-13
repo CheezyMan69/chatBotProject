@@ -11,4 +11,4 @@ ignoring package installation temps
 setup.py
 
 ignoring python caches
-*__pycache__*/*
+*/__pycache__/*
