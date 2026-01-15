@@ -14,3 +14,5 @@ ignoring python caches
 */__pycache__/*
 __pycache__/*
 *cpython
+src/llm_calls/__pycache__/__init__.cpython-312.pyc
+src/llm_calls/__pycache__/rag_functions.cpython-312.pyc
