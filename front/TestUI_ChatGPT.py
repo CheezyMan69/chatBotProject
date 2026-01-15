@@ -4,6 +4,14 @@ import os
 
 st.set_page_config(page_title="Chatbot", page_icon="💬")
 
+# File uploading widget
+# taking in images, videos, audio and text
+uploaded_file = st.file_uploader("Choose a file for the RAG system", ["image/jpeg", ".jpeg", "image/png", ".png",  "image/jpg", ".jpg", "mp4", "mp3", "txt"])    
+if uploaded_file is not None:
+    # getting the bytes of the uploaded file
+    bytes_data = uploaded_file.getvalue()
+    # implement sending it to another function on the handling_upload or processing_indexing!!!
+
 st.title("💬 Simple Chatbot")
 
 
