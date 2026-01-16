@@ -1,6 +1,7 @@
 import streamlit as st
 import src.llm_calls.rag_functions
 import os
+from src.processing_indexing.receiving_file import detect_dtype
 
 st.set_page_config(page_title="Chatbot", page_icon="💬")
 
@@ -8,9 +9,9 @@ st.set_page_config(page_title="Chatbot", page_icon="💬")
 # taking in images, videos, audio and text
 uploaded_file = st.file_uploader("Choose a file for the RAG system", ["image/jpeg", ".jpeg", "image/png", ".png",  "image/jpg", ".jpg", "mp4", "mp3", "txt"])    
 if uploaded_file is not None:
-    # getting the bytes of the uploaded file
     bytes_data = uploaded_file.getvalue()
-    # implement sending it to another function on the handling_upload or processing_indexing!!!
+    detect_dtype(uploaded_file, uploaded_file.type)
+    st.write("Filename: ", uploaded_file.type, "is currently being processed.")
 
 st.title("💬 Simple Chatbot")
 
