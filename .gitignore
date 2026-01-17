@@ -16,3 +16,6 @@ __pycache__/
 
 ignoring local build
 build/
+
+ignoring temporary local storage of file for processing
+data/
