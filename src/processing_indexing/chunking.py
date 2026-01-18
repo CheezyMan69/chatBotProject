@@ -1,5 +1,5 @@
-# this module should be responsible of receiving the bytes from the front_end
-# processing them, categorize them, making embeddings out of them and then indexing them in Pinecone
+# this fileqw should be responsible of receiving the bytes from the front_end
+# processing them, categorize them and chunk them
 # note for how streamlit packages data types:
 # txt = text/plain
 # images = image/png - jpeg - jpg
@@ -11,6 +11,8 @@ import cv2
 from io import StringIO
 from langchain_google_genai import ChatGoogleGenerativeAI
 import os
+from pydub import AudioSegment
+from src.processing_indexing import embeddings
 
 api_gemini = os.environ['GEMINI']
 
@@ -19,19 +21,19 @@ def detect_dtype(file, dtype, path="nope"):
     match dtype:
         case "text/plain":
             print("The filetype is text")
-            # embed_text(chunk_text(file)) implement!
+            embeddings.embed_text(chunk_text(file))
         case "image/png":
             print("The filetype is an image")
-            # embed_image(path) implement!
+            embeddings.embed_image(path) 
         case "image/jpeg":
             print("The filetype is an image")
-            # embed_image(path) implement!
+            embeddings.embed_image(path) 
         case "image/jpg":
             print("The filetype is an image")
-            # embed_image(path) implement!
+            embeddings.embed_image(path) 
         case "video/mp4":
             print("The filetype is a video")
-            # embed_video(chunk_video(file, path)) implement!
+            embeddings.embed_video(chunk_video(file, path)) 
         case "audio/mpeg":
             print("The filetype is an audio")
             # embed_audio(chunk_audio(path)) implement!
@@ -130,6 +132,27 @@ def chunk_video(video, path):
 
     return filenames
 
-def chunk_audio(path):
-    # implement!, chunk it a bit before sending it to embedding
-    pass
+def chunk_audio(file, path):
+    # creating chunks based on total duration in seconds
+    audio = AudioSegment.from_file(path, format="mp3")
+    duration_in_seconds = audio.duration_seconds
+
+    # get how much should each_chunk last
+    chunk_duration = len(audio) // 5
+
+    # chunk the audio in 5 fixed-size chunks
+    slices = audio[::chunk_duration]
+
+    # getting the name of file without the ".mp3" termination for exporting
+    audio_name = file.name.replace('.mp3', "")
+
+    # creating return list
+    filenames = []
+
+    # exporthing chunksssssss
+    for i, chunk in enumerate(slices):
+        with open(os.path.join("data", f"{audio_name}_chunk{i}.mp3"), "wb") as f:
+            chunk.export(f, format='mp3')
+            filenames.append(os.path.join("data", f"{audio_name}_chunk{i}.mp3"))
+    
+    return filenames
