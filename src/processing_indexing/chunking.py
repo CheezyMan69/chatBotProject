@@ -12,31 +12,37 @@ from io import StringIO
 from langchain_google_genai import ChatGoogleGenerativeAI
 import os
 from pydub import AudioSegment
-from src.processing_indexing import embeddings
+from src.processing_indexing import embeddings, indexing
+import whisper
+from datetime import datetime, timezone
+from pathlib import Path
 
 api_gemini = os.environ['GEMINI']
+
+# loading the whisper model, this could take a while...
+model = whisper.load_model("base")
 
 def detect_dtype(file, dtype, path="nope"):
     print("The file has been saved to: ", path)
     match dtype:
         case "text/plain":
             print("The filetype is text")
-            embeddings.embed_text(chunk_text(file))
+            indexing.index_text(embeddings.embed_text(chunk_text(file)))
         case "image/png":
             print("The filetype is an image")
-            embeddings.embed_image(path) 
+            indexing.index_image(embeddings.embed_image(path))
         case "image/jpeg":
             print("The filetype is an image")
-            embeddings.embed_image(path) 
+            indexing.index_image(embeddings.embed_image(path))
         case "image/jpg":
             print("The filetype is an image")
-            embeddings.embed_image(path) 
+            indexing.index_image(embeddings.embed_image(path))
         case "video/mp4":
             print("The filetype is a video")
-            embeddings.embed_video(chunk_video(file, path)) 
+            indexing.index_video(embeddings.embed_video(chunk_video(file, path))) 
         case "audio/mpeg":
             print("The filetype is an audio")
-            # embed_audio(chunk_audio(path)) implement!
+            indexing.index_text(embeddings.embed_text(transcribe_audio(path)))
 
 # different chunking strategies based on the file
 def chunk_text(file):
@@ -132,27 +138,29 @@ def chunk_video(video, path):
 
     return filenames
 
-def chunk_audio(file, path):
-    # creating chunks based on total duration in seconds
-    audio = AudioSegment.from_file(path, format="mp3")
-    duration_in_seconds = audio.duration_seconds
+def transcribe_audio(path):
+    ## implement!
+    ## take out the comments and implement the quote system
 
-    # get how much should each_chunk last
-    chunk_duration = len(audio) // 5
+    # uploaded_at = datetime.now(timezone.utc).isoformat()
+    # docs: list[dict] = []
+    text_list = []
 
-    # chunk the audio in 5 fixed-size chunks
-    slices = audio[::chunk_duration]
+    result = model.transcribe(path)
+    for seg in result.get("segments", []):
+        # docs.append({
+        #     "text": seg["text"].strip(),
+        #     "metadata": {
+        #         "source_type": "audio_speech",
+        #         "original_filename": Path(path).name,
+        #         "uploaded_at": uploaded_at,
+        #         "start_sec": float(seg["start"]),
+        #         "end_sec": float(seg["end"]),
+        #         "language": result.get("language"),
+        #     }
+        # })
 
-    # getting the name of file without the ".mp3" termination for exporting
-    audio_name = file.name.replace('.mp3', "")
+        text_list.append(seg["text"].strip())
 
-    # creating return list
-    filenames = []
-
-    # exporthing chunksssssss
-    for i, chunk in enumerate(slices):
-        with open(os.path.join("data", f"{audio_name}_chunk{i}.mp3"), "wb") as f:
-            chunk.export(f, format='mp3')
-            filenames.append(os.path.join("data", f"{audio_name}_chunk{i}.mp3"))
-    
-    return filenames
+    print(text_list)
+    return text_list

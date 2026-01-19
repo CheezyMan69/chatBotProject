@@ -38,5 +38,3 @@ def embed_video(filenames):
 
     print(package)
     return package
-
-# embed_audio implement!

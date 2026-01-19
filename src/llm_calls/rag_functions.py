@@ -11,7 +11,7 @@ dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
 
 pc = Pinecone(api_key = os.getenv('PINECONE'))
-index = pc.Index(host='https://secondrag-4hezoud.svc.aped-4627-b74a.pinecone.io')
+index = pc.Index(host='https://finalrag-clipvit-4hezoud.svc.aped-4627-b74a.pinecone.io')
 
 
 def similarity_search(query: str, top_k : int, namespace : str):
