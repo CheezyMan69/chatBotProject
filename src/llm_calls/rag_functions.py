@@ -6,11 +6,12 @@ from sentence_transformers import SentenceTransformer
 from dotenv import find_dotenv, load_dotenv
 import os
 from src.helpers.helpers import load_image_base64
+from src.processing_indexing import indexing
 
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
 
-pc = Pinecone(api_key = os.getenv('PINECONE'))
+pc = Pinecone(api_key = os.getenv('PINECONE_API_KEY'))
 index = pc.Index(host='https://finalrag-clipvit-4hezoud.svc.aped-4627-b74a.pinecone.io')
 
 
@@ -50,23 +51,23 @@ def gemini_call_normal(prompt: str):
     return response.content
 
 def gemini_call_rag(prompt:str):
-    # get metadata from similarity search based on user prompt
+    # # get metadata from similarity search based on user prompt
     result_text = get_relevant_metadata(similarity_search(prompt, 5, "text"))
     result_pathnames_images = get_relevant_metadata(similarity_search(prompt, 3, "img"))
 
-    # prepare to send extra content for RAG response
+    # # prepare to send extra content for RAG response
     system_msg = SystemMessage("You're a helpful assistant")
 
-    # encoding data into base64 format because that's how the gemini-langchain interface works
-
+    # # encoding data into base64 format because that's how the gemini-langchain interface works
+    # # also uploading our object to aws s3 and getting a direct link for gemini to use 
+    
     image_url_1 = result_pathnames_images[0]
     image_url_2 = result_pathnames_images[1]
     image_url_3 = result_pathnames_images[2]
 
-    image_data_1 = load_image_base64(image_url_1)
-    image_data_2 = load_image_base64(image_url_2)
-    image_data_3 = load_image_base64(image_url_3)
-
+    image_data_1 = load_image_base64(indexing.upload_file(image_url_1))
+    image_data_2 = load_image_base64(indexing.upload_file(image_url_2))
+    image_data_3 = load_image_base64(indexing.upload_file(image_url_3))
 
     human_msg = HumanMessage(
             content=[

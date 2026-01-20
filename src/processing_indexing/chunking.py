@@ -84,10 +84,10 @@ def chunk_video(video, path):
 
     # get five frames depending on how long the video is
     class frames:
-        second_frame = frame_counter * 2 / 5
-        third_frame = frame_counter * 3 / 5
-        fourth_frame = frame_counter * 4 / 5
-        fifth_frame = frame_counter * 5 / 5
+        second_frame = frame_counter * 2 // 5
+        third_frame = frame_counter * 3 // 5
+        fourth_frame = frame_counter * 4 // 5
+        fifth_frame = frame_counter * 5 // 5
     
     print("total frames in the video: ", frame_counter)
     

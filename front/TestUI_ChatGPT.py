@@ -15,12 +15,14 @@ def save_to_disk(data):
 # taking in images, videos, audio and text
 uploaded_file = st.file_uploader("Choose a file for the RAG system", ["image/jpeg", ".jpeg", "image/png", ".png",  "image/jpg", ".jpg", "mp4", "mp3", "txt"])    
 if uploaded_file is not None:
-    if uploaded_file.type != "text/plain":
-        st.write("Filename: ", uploaded_file.type, "is currently being processed.")
-        detect_dtype(uploaded_file, uploaded_file.type, save_to_disk(uploaded_file))
-    else: 
-        st.write("Filename: ", uploaded_file.type, "is currently being processed.")
-        detect_dtype(uploaded_file, uploaded_file.type)
+    if uploaded_file.name not in st.session_state:
+        st.session_state[uploaded_file.name] = 'uploaded'
+        if uploaded_file.type != "text/plain":
+            st.write("Filename: ", uploaded_file.type, "is currently being processed.")
+            detect_dtype(uploaded_file, uploaded_file.type, save_to_disk(uploaded_file))
+        else: 
+            st.write("Filename: ", uploaded_file.type, "is currently being processed.")
+            detect_dtype(uploaded_file, uploaded_file.type)
     
 
 st.title("💬 Simple Chatbot")
